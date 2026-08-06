@@ -1,5 +1,4 @@
-![Kauenkkjjk](flamingtext_com-1801743181.gif)
-
+![Kauenkkjjk](https://media1.tenor.com/m/y1QFa-1vyKYAAAAC/plink-wide-cat.gif)
 # **Kauenkkjjk**
 
 **Programador no Roblox Studio, e criador de bugs em linguagens tipo Luau e Python.**
