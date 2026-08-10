@@ -1,0 +1,396 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService") 
+
+local boxSystem = ReplicatedStorage:WaitForChild("BoxSystem")
+local pickupRemote = boxSystem:WaitForChild("PickupBox")
+local dropRemote = boxSystem:WaitForChild("DropBox")
+local throwRemote = boxSystem:WaitForChild("ThrowBox")
+local HabilitysSystem = ReplicatedStorage:WaitForChild("HabilitysSystem")
+local BoxState = require(HabilitysSystem:WaitForChild("BoxState"))
+
+local connections = {}
+
+local cfg = {
+	pickupTime = 0.3,
+	backOffset = Vector3.new(0, 1.5, -1),
+	holdSpeed = 8,
+	normalSpeed = 16,
+	maxDist = 12,
+	throwMaxSpeed = 85,
+	throwMinSpeed = 15,
+	throwArcHeight = 25,
+}
+
+local function isHolding(plr)
+	return BoxState.isHolding(plr)
+end
+
+local function clearConnection(plr)
+	if connections[plr] then
+		connections[plr]:Disconnect()
+		connections[plr] = nil
+	end
+end
+
+local function setParticleEnabled(box, enabled)
+	local main = box:FindFirstChild("Main")
+	if not main then return end
+
+	local attachment = main:FindFirstChild("I")
+	if not attachment then return end
+
+	local particle = attachment:FindFirstChild("Eff")
+	if particle and particle:IsA("ParticleEmitter") then
+		particle.Enabled = enabled
+	end
+end
+
+local function setupBox(box)
+	local main = box:FindFirstChild("Main")
+	if not main then return false end
+
+	main.Massless = true
+	main.CanCollide = false
+	main.Anchored = true
+
+	for _, p in box:GetDescendants() do
+		if p:IsA("BasePart") then
+			p.CanCollide = false
+			p.Massless = true
+		end
+	end
+
+	setParticleEnabled(box, false)
+	return true
+end
+
+local function releaseBox(box)
+	local main = box:FindFirstChild("Main")
+	if main then
+		local weld = main:FindFirstChild("BackWeld")
+		if weld then weld:Destroy() end
+
+		main.Anchored = false
+		main.CanCollide = true
+		main.Massless = false
+
+		pcall(function()
+			main:SetNetworkOwner(nil)
+		end)
+	end
+	for _, p in box:GetDescendants() do
+		if p:IsA("BasePart") then
+			p.CanCollide = true
+			p.Massless = false
+		end
+	end
+	setParticleEnabled(box, true)
+end
+
+local function animatePickup(plr, box, done)
+	local char = plr.Character
+	if not char then return end
+
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	local root = char:FindFirstChild("HumanoidRootPart")
+	local main = box:FindFirstChild("Main")
+	if not hum or not root or not main then return end
+
+	local startPos = main.CFrame
+	local startPosPos = startPos.Position
+	local t = tick()
+	local dur = cfg.pickupTime + 0.15 
+
+	local conn
+	conn = RunService.Heartbeat:Connect(function()
+		local elapsed = tick() - t
+		local c = plr.Character
+		if not c or not BoxState.isHolding(plr) then
+			conn:Disconnect()
+			return
+		end
+
+		local r = c:FindFirstChild("HumanoidRootPart")
+		if not r then
+			conn:Disconnect()
+			return
+		end
+
+		local targetCFrame = r.CFrame * CFrame.new(0, 0, 1) * CFrame.Angles(math.rad(25), 0, 0) * CFrame.new(cfg.backOffset)
+		local targetPos = targetCFrame.Position
+
+		if elapsed < dur then
+			local p = elapsed / dur
+
+			local fluidP = TweenService:GetValue(p, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+
+			local arcHeight = (4 * p * (1 - p)) * 3.5 
+
+			local midPos = startPosPos:Lerp(targetPos, fluidP)
+			local finalPos = midPos + Vector3.new(0, arcHeight, 0)
+
+			local flipAngle = math.sin(p * math.pi) * math.pi
+			local extraRotation = CFrame.Angles(flipAngle, 0, 0)
+
+			-- CORREÇÃO: Usamos math.clamp para garantir que o Lerp de CFrame nunca quebre a física passando de 1!
+			local rot = startPos.Rotation:Lerp(targetCFrame.Rotation, math.clamp(fluidP, 0, 1))
+
+			main.CFrame = CFrame.new(finalPos) * rot * extraRotation
+		else
+			main.CFrame = targetCFrame
+			conn:Disconnect()
+			if done then done() end
+		end
+	end)
+end
+
+local function createWeld(plr, box)
+	local char = plr.Character
+	if not char then return end
+
+	local root = char:FindFirstChild("HumanoidRootPart")
+	local main = box:FindFirstChild("Main")
+	if not root or not main then return end
+
+	local existingWeld = main:FindFirstChild("BackWeld")
+	if existingWeld then existingWeld:Destroy() end
+
+	main.CFrame = root.CFrame * CFrame.new(0, 0, 1) * CFrame.Angles(math.rad(25), 0, 0) * CFrame.new(cfg.backOffset)
+	main.Anchored = false
+
+	local weld = Instance.new("WeldConstraint")
+	weld.Name = "BackWeld"
+	weld.Part0 = root
+	weld.Part1 = main
+	weld.Parent = main
+end
+
+local function startHoldLoop(plr, box)
+	clearConnection(plr)
+	createWeld(plr, box)
+end
+
+local function pickup(plr, box)
+	if isHolding(plr) then return false end
+
+	local char = plr.Character
+	if not char then return false end
+
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if not hum or hum.Health <= 0 then return false end
+
+	local root = char:FindFirstChild("HumanoidRootPart")
+	if not root then return false end
+
+	local main = box:FindFirstChild("Main")
+	if not main then return false end
+
+	local dist = (root.Position - main.Position).Magnitude
+	if dist > cfg.maxDist then return false end
+
+	BoxState.setHolding(plr, box)
+	setupBox(box)
+	hum.WalkSpeed = cfg.holdSpeed
+	hum.JumpPower = 0
+
+	pickupRemote:FireClient(plr, "StartPickup", box)
+
+	animatePickup(plr, box, function()
+		if BoxState.holders[plr] == box then
+			startHoldLoop(plr, box)
+		end
+	end)
+
+	return true
+end
+
+local function drop(plr)
+	if not isHolding(plr) then return false end
+
+	local box = BoxState.holders[plr]
+	local char = plr.Character
+
+	clearConnection(plr)
+
+	if char then
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if hum then 
+			hum.WalkSpeed = cfg.normalSpeed
+			hum.JumpPower = 50
+		end
+	end
+
+	releaseBox(box)
+	BoxState.removeHolding(plr)
+	dropRemote:FireClient(plr, "Dropped")
+
+	return true
+end
+
+local function throw(plr, direction, power, dist)
+	if not isHolding(plr) then return false end
+	if typeof(direction) ~= "Vector3" or direction.Magnitude < 0.01 then return false end
+
+	local box = BoxState.holders[plr]
+	local char = plr.Character
+
+	clearConnection(plr)
+
+	if char then
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if hum then 
+			hum.WalkSpeed = cfg.normalSpeed
+			hum.JumpPower = 50
+		end
+	end
+
+	local main = box:FindFirstChild("Main")
+	if main then
+		local weld = main:FindFirstChild("BackWeld")
+		if weld then weld:Destroy() end
+
+		main.Anchored = false
+		main.Massless = false
+
+		local powerFactor = math.clamp((power or 0) / 100, 0, 1)
+		local throwSpeed = cfg.throwMinSpeed + (cfg.throwMaxSpeed - cfg.throwMinSpeed) * powerFactor
+		local aimDir = direction.Unit
+		local clampedDir = Vector3.new(aimDir.X, math.clamp(aimDir.Y, -0.3, 0.7), aimDir.Z)
+		if clampedDir.Magnitude > 0.01 then
+			clampedDir = clampedDir.Unit
+		else
+			clampedDir = aimDir
+		end
+
+		if char then
+			local root = char:FindFirstChild("HumanoidRootPart")
+			if root then
+				main.CFrame = CFrame.new(root.Position + aimDir * 3 + Vector3.new(0, 1.5, 0))
+			end
+		end
+
+		pcall(function()
+			main:SetNetworkOwner(nil)
+		end)
+
+		main.AssemblyLinearVelocity = clampedDir * throwSpeed + Vector3.new(0, cfg.throwArcHeight, 0)
+		main.AssemblyAngularVelocity = Vector3.new(
+			math.random(-8, 8),
+			math.random(-8, 8),
+			math.random(-8, 8)
+		)
+
+		for _, p in box:GetDescendants() do
+			if p:IsA("BasePart") then
+				p.CanCollide = true
+				p.Massless = false
+			end
+		end
+		main.CanCollide = true
+
+		if char then
+			local noColFolder = Instance.new("Folder")
+			noColFolder.Name = "ThrowNoCol"
+			noColFolder.Parent = main
+
+			for _, part in char:GetDescendants() do
+				if part:IsA("BasePart") then
+					local nc = Instance.new("NoCollisionConstraint")
+					nc.Part0 = main
+					nc.Part1 = part
+					nc.Parent = noColFolder
+				end
+			end
+
+			task.delay(0.5, function()
+				if noColFolder and noColFolder.Parent then
+					noColFolder:Destroy()
+				end
+			end)
+		end
+	end
+
+	setParticleEnabled(box, true)
+
+	BoxState.removeHolding(plr)
+	pickupRemote:FireClient(plr, "ThrowSuccess")
+
+	return true
+end
+
+local function addClickDetector(box)
+	if not box:IsA("Model") then return end
+	local main = box:WaitForChild("Main", 5)
+	if not main then return end
+
+	for _, c in main:GetChildren() do
+		if c:IsA("ClickDetector") then c:Destroy() end
+	end
+
+	local click = Instance.new("ClickDetector")
+	click.MaxActivationDistance = cfg.maxDist
+	click.Parent = main
+
+	setParticleEnabled(box, true)
+
+	click.MouseClick:Connect(function(plr)
+		local ownerId = box:GetAttribute("Owner")
+		if ownerId and tostring(ownerId) == tostring(plr.UserId) then
+			pickup(plr, box)
+		end
+	end)
+end
+
+for _, d in workspace:GetDescendants() do
+	if d:IsA("Model") and d.Name == "Box" then
+		addClickDetector(d)
+	end
+end
+
+workspace.DescendantAdded:Connect(function(d)
+	if d:IsA("Model") and d.Name == "Box" then
+		task.wait(0.1)
+		addClickDetector(d)
+	end
+end)
+
+pickupRemote.OnServerEvent:Connect(function(plr, action)
+	if action == "Drop" then drop(plr) end
+end)
+
+throwRemote.OnServerEvent:Connect(function(plr, direction, power, dist)
+	throw(plr, direction, power, dist)
+end)
+
+Players.PlayerRemoving:Connect(function(plr)
+	clearConnection(plr)
+	if BoxState.isHolding(plr) then
+		releaseBox(BoxState.holders[plr])
+		BoxState.removeHolding(plr)
+	end
+end)
+
+for _, plr in Players:GetPlayers() do
+	if plr.Character then
+		local hum = plr.Character:FindFirstChildOfClass("Humanoid")
+		if hum then
+			hum.WalkSpeed = cfg.normalSpeed
+			hum.JumpPower = 50
+		end
+	end
+end
+
+Players.PlayerAdded:Connect(function(plr)
+	plr.CharacterAdded:Connect(function(char)
+		local hum = char:WaitForChild("Humanoid")
+		hum.WalkSpeed = cfg.normalSpeed
+		hum.JumpPower = 50
+
+		if BoxState.isHolding(plr) then
+			releaseBox(BoxState.holders[plr])
+			BoxState.removeHolding(plr)
+		end
+	end)
+end)
