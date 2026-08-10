@@ -134,7 +134,7 @@ local function animatePickup(plr, box, done)
 			local flipAngle = math.sin(p * math.pi) * math.pi
 			local extraRotation = CFrame.Angles(flipAngle, 0, 0)
 
-			-- CORRE«√O: Usamos math.clamp para garantir que o Lerp de CFrame nunca quebre a fÌsica passando de 1!
+			-- CORRE√á√ÉO: Usamos math.clamp para garantir que o Lerp de CFrame nunca quebre a f√≠sica passando de 1!
 			local rot = startPos.Rotation:Lerp(targetCFrame.Rotation, math.clamp(fluidP, 0, 1))
 
 			main.CFrame = CFrame.new(finalPos) * rot * extraRotation
