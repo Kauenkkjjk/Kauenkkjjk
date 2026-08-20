@@ -1,4 +1,4 @@
-![Kauenkkjjk](https://media1.tenor.com/m/y1QFa-1vyKYAAAAC/plink-wide-cat.gif)
+![Kauenkkjjk](https://tenor.com/pt-BR/view/happy-cat-gif-10804346947536782797)
 
 # **Kauenkkjjk**
 ---
