@@ -1,4 +1,4 @@
-[![Kauenkkjjk](https://tenor.com/pt-BR/view/happy-cat-gif-10804346947536782797)
+![Kauenkkjjk](https://tenor.com/pt-BR/view/happy-cat-gif-10804346947536782797)
 
 # **Kauenkkjjk**
 ---
