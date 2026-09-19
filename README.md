@@ -1,6 +1,6 @@
 <div align="center">
 
-  # *𝐾𝑎𝑢𝑒𝑛kkjjk*
+  # 𝐾𝑎𝑢𝑒𝑛kkjjk
 
   <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/ffff.gif" width="400">
   
@@ -15,5 +15,9 @@
   <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/fff2.gif" width="200">
   <br>
   <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/fff3.gif" width="200">
+  
+  <br><br>
+
+  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/silenthill.gif" width="300">
 
 </div>
