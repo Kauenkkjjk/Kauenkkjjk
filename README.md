@@ -18,6 +18,6 @@
   
   <br><br>
 
-  <img src="https://media1.tenor.com/m/bv8dvrs6vke/silent-hill.gif" width="300">
+  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/silenthill.gif" width="300">
 
 </div>
