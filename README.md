@@ -1,2 +1,4 @@
 # *𝐾𝑎𝑢𝑒𝑛𝑘𝑘𝑗𝑗𝑘*
-![](assets/text.gif)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/text.gif" width="400">
+</p>
