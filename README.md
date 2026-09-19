@@ -18,6 +18,4 @@
   
   <br><br>
 
-  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/silenthill.gif" width="300">
-
 </div>
