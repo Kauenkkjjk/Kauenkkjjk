@@ -5,7 +5,9 @@
   <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/ffff.gif" width="400">
 
   <p>
-    <sub>IF | Computing ⅓ &bull; Beginner Blender modeler &bull; Learning Python</sub>
+    <em><h3>IF | Computing ⅓</h3></em>
+    <em><h3>Beginner Blender modeler</h3></em>
+    <em><h3>Learning Python</h3></em>
   </p>
 
 </div>
