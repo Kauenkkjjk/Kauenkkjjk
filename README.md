@@ -1,11 +1,6 @@
-![Kauenkkjjk](https://media1.tenor.com/m/y1QFa-1vyKYAAAAC/plink-wide-cat.gif)
+![Kauenkkjjk]
 
 # **Kauenkkjjk**
 ---
-### **🛠️ O que eu faço**
-
-*   **Luau:** Faço scripts no Roblox Studio, Interface e Modelos 3D.
 
 ---
- ![](https://media.tenor.com/Z-dfcEoc6k0AAAAj/toemer-toemer-simpson.gif)![](https://media.tenor.com/kQA86PqyXZQAAAAi/small-dancing-white-cat-dance-funny.gif)![](https://media1.tenor.com/m/FNVOSJ9lj1wAAAAd/sir-cat.gif)
-![](https://media1.tenor.com/m/8pg6pKEUmT0AAAAC/egg-zazu-meme-egg-cat-meme.gif)
