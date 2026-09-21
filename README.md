@@ -6,7 +6,7 @@
   
   <br>
 
-  <a href="https://www.animatedimages.org/cat-dividing-lines-134.htm"><img src="https://www.animatedimages.org/data/media/134/animated-dividing-line-image-0111.gif" border="0" alt="animated-dividing-line-image-0111" /></a>
+  <a href="https://www.animatedimages.org/cat-dividing-lines-134.htm"><img src="https://www.animatedimages.org/data/media/134/animated-dividing-line-image-0161.gif" border="0" alt="animated-dividing-line-image-0111" /></a>
 
   <br><br>
 
