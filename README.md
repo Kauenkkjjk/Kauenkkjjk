@@ -1,6 +1,6 @@
 <div align="center">
   
-  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/1.gif" width="400">
+  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/a0.gif" width="400">
   
   <br>
 
@@ -8,13 +8,13 @@
 
   <br><br>
 
-  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/0.gif" width="200">
+  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/a1.gif" width="200">
   <br>
-  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/2.gif" width="200">
+  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/a2.gif" width="200">
   <br>
-  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/3.gif" width="200">
+  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/a3.gif" width="200">
   <br>
-  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/4.gif" width="200">
+  <img src="https://raw.githubusercontent.com/Kauenkkjjk/Kauenkkjjk/main/assets/a4.gif" width="200">
   
   <br><br>
 
